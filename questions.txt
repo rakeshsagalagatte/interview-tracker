@@ -1,0 +1,50 @@
+1. Write a program to find the maximum number in a list using Stream API.
+2. Write a program to find the minimum number in a list using Stream API.
+3. Count the number of strings in a list that start with a specific letter using Stream.
+4. Convert a list of strings to uppercase using Stream API.
+5. Find the sum of all even numbers in a list using Stream.
+6. Remove duplicate elements from a list using Stream.
+7. Sort a list of integers in ascending order using Stream.
+8. Sort a list of integers in descending order using Stream.
+9. Find the first element of a list using Stream.
+10. Find any element of a list using Stream.
+11. Check if a list contains a specific element using Stream.
+12. Count occurrences of each word in a list using Stream and `Collectors.groupingBy`.
+13. Find the longest string in a list using Stream.
+14. Find the shortest string in a list using Stream.
+15. Partition numbers into even and odd using Stream.
+16. Convert a list of integers into a comma-separated string using Stream.
+17. Find duplicate elements in a list using Stream.
+18. Flatten a list of lists into a single list using Stream.
+19. Find the second highest number in a list using Stream.
+20. Find the second lowest number in a list using Stream.
+21. Find common elements between two lists using Stream.
+22. Merge two lists into one using Stream.
+23. Find distinct characters in a string using Stream.
+24. Reverse a list using Stream.
+25. Find the frequency of each character in a string using Stream.
+26. Group a list of employees by department using Stream.
+27. Find the highest paid employee in each department using Stream.
+28. Count employees in each department using Stream.
+29. Find average salary of employees using Stream.
+30. Find top 3 highest numbers in a list using Stream.
+31. Find top 3 lowest numbers in a list using Stream.
+32. Skip first 5 elements and return the rest using Stream.
+33. Limit a list to first 5 elements using Stream.
+34. Convert a list of integers to their squares using Stream.
+35. Remove null values from a list using Stream.
+36. Concatenate two streams into one.
+37. Generate 10 random numbers using Stream API.
+38. Check if all elements in a list are even using Stream.
+39. Check if any element in a list is odd using Stream.
+40. Count total elements in a list using Stream.
+41. Find the average of a list of integers using Stream.
+42. Find the product of all elements in a list using Stream.
+43. Find palindrome strings from a list using Stream.
+44. Find anagrams from a list of words using Stream.
+45. Filter prime numbers from a list using Stream.
+46. Find numbers greater than a given threshold using Stream.
+47. Map a list of employees to their names using Stream.
+48. Create a map of employee ID to employee name using Stream.
+49. Group transactions by type and sum their amounts using Stream.
+50. Parallelize a stream and demonstrate parallel processingS with Stream API.
