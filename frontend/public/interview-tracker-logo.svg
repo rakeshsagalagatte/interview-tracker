@@ -1,0 +1,9 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Interview Tracker logo</title>
+  <desc id="desc">A checklist and chat mark representing interview question tracking.</desc>
+  <rect width="160" height="160" rx="32" fill="#172033"/>
+  <path d="M45 42H98C107.941 42 116 50.0589 116 60V91C116 100.941 107.941 109 98 109H77L54.5 126V109H45C35.0589 109 27 100.941 27 91V60C27 50.0589 35.0589 42 45 42Z" fill="#FFFFFF"/>
+  <path d="M50 68L61 79L82 58" stroke="#2563EB" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M51 94H91" stroke="#98A2B3" stroke-width="7" stroke-linecap="round"/>
+  <path d="M112 72H121C127.627 72 133 77.3726 133 84V104C133 110.627 127.627 116 121 116H119V129L102 116H92" stroke="#38BDF8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

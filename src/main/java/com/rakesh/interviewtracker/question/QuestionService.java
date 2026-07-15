@@ -1,15 +1,18 @@
 package com.rakesh.interviewtracker.question;
 
 import com.rakesh.interviewtracker.question.exception.QuestionNotFoundException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Service
 @Transactional(readOnly = true)
 public class QuestionService {
+
+    private static final int MAX_PAGE_SIZE = 100;
 
     private final QuestionRepository questionRepository;
 
@@ -17,11 +20,19 @@ public class QuestionService {
         this.questionRepository = questionRepository;
     }
 
-    public List<QuestionResponse> findAll() {
-        return questionRepository.findAll(Sort.by(Sort.Direction.ASC, "id"))
-                .stream()
-                .map(QuestionResponse::from)
-                .toList();
+    public PageResponse<QuestionResponse> findAll(
+            String search,
+            Difficulty difficulty,
+            AnswerStatus answerStatus,
+            int page,
+            int size
+    ) {
+        int safePage = Math.max(page, 0);
+        int safeSize = Math.min(Math.max(size, 1), MAX_PAGE_SIZE);
+        PageRequest pageRequest = PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.ASC, "id"));
+
+        return PageResponse.from(questionRepository.search(search, difficulty, answerStatus, pageRequest)
+                .map(QuestionResponse::from));
     }
 
     public QuestionResponse findById(Long id) {
@@ -34,6 +45,11 @@ public class QuestionService {
                 request.title(), request.answer(), request.topic(),
                 request.difficulty(), request.tags(), request.answerStatus()
         );
+        question.update(
+                request.title(), request.answer(), request.topic(), request.difficulty(),
+                request.tags(), request.answerStatus(), request.lastReviewedAt(), request.nextReviewAt(),
+                request.reviewCount(), request.confidenceLevel()
+        );
         return QuestionResponse.from(questionRepository.save(question));
     }
 
@@ -42,8 +58,19 @@ public class QuestionService {
         Question question = getQuestion(id);
         question.update(
                 request.title(), request.answer(), request.topic(),
-                request.difficulty(), request.tags(), request.answerStatus()
+                request.difficulty(), request.tags(), request.answerStatus(),
+                request.lastReviewedAt(), request.nextReviewAt(), request.reviewCount(),
+                request.confidenceLevel()
         );
+        return QuestionResponse.from(question);
+    }
+
+    @Transactional
+    public QuestionResponse markReviewed(Long id, ReviewRequest request) {
+        Question question = getQuestion(id);
+        LocalDate reviewedAt = request.reviewedAt() == null ? LocalDate.now() : request.reviewedAt();
+        LocalDate nextReviewAt = request.nextReviewAt() == null ? reviewedAt.plusDays(7) : request.nextReviewAt();
+        question.markReviewed(reviewedAt, nextReviewAt, request.confidenceLevel());
         return QuestionResponse.from(question);
     }
 

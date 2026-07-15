@@ -1,0 +1,216 @@
+<main class="shell">
+  <section class="topbar" aria-label="Interview tracker summary">
+    <div>
+      <div class="brand">
+        <img src="interview-tracker-logo.svg" alt="Interview Tracker logo" />
+        <div>
+          <p class="eyebrow">Interview Tracker</p>
+          <h1>Question Bank</h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <div>
+        <span>{{ totalElements() }}</span>
+        <small>Matches</small>
+      </div>
+      <div>
+        <span>{{ reviewedCount() }}</span>
+        <small>Reviewed on page</small>
+      </div>
+      <div>
+        <span>{{ draftCount() }}</span>
+        <small>Draft on page</small>
+      </div>
+    </div>
+  </section>
+
+  @if (error()) {
+    <div class="alert" role="alert">{{ error() }}</div>
+  }
+
+  <section class="workspace">
+    <aside class="question-panel" aria-label="Question list">
+      <div class="toolbar">
+        <label class="search">
+          <span>Search</span>
+          <input
+            type="search"
+            placeholder="Title, topic, or tag"
+            [value]="searchTerm()"
+            (input)="updateSearchTerm($any($event.target).value)"
+          />
+        </label>
+
+        <div class="filters">
+          <label>
+            <span>Difficulty</span>
+            <select
+              [value]="difficultyFilter()"
+              (change)="updateDifficultyFilter($any($event.target).value)"
+            >
+              <option value="ALL">All</option>
+              @for (difficulty of difficulties; track difficulty) {
+                <option [value]="difficulty">{{ difficulty }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Status</span>
+            <select [value]="statusFilter()" (change)="updateStatusFilter($any($event.target).value)">
+              <option value="ALL">All</option>
+              @for (status of answerStatuses; track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Page Size</span>
+            <select [value]="pageSize()" (change)="updatePageSize($any($event.target).value)">
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </label>
+        </div>
+
+        <button type="button" class="primary" (click)="newQuestion()">New Question</button>
+      </div>
+
+      <div class="list-state">
+        @if (loading()) {
+          <span>Loading questions...</span>
+        } @else {
+          <span>{{ pageStart() }}-{{ pageEnd() }} of {{ totalElements() }} questions</span>
+        }
+      </div>
+
+      <div class="question-list">
+        @for (question of questions(); track question.id) {
+          <button
+            type="button"
+            class="question-row"
+            [ngClass]="{ active: selectedQuestion()?.id === question.id }"
+            (click)="selectQuestion(question)"
+          >
+            <span class="question-title">{{ question.title }}</span>
+            <span class="meta-line">
+              <span>{{ question.topic }}</span>
+              <span>{{ question.difficulty }}</span>
+              <span>{{ question.answerStatus }}</span>
+            </span>
+            @if (question.tags.length) {
+              <span class="tags">
+                @for (tag of question.tags; track tag) {
+                  <span>{{ tag }}</span>
+                }
+              </span>
+            }
+          </button>
+        } @empty {
+          <div class="empty">No questions match the current filters.</div>
+        }
+      </div>
+
+      <div class="pagination">
+        <button type="button" [disabled]="page() === 0 || loading()" (click)="goToPreviousPage()">
+          Previous
+        </button>
+        <span>Page {{ totalPages() === 0 ? 0 : page() + 1 }} of {{ totalPages() }}</span>
+        <button
+          type="button"
+          [disabled]="page() + 1 >= totalPages() || loading()"
+          (click)="goToNextPage()"
+        >
+          Next
+        </button>
+      </div>
+    </aside>
+
+    <section class="editor" aria-label="Question editor">
+      <div class="editor-header">
+        <div>
+          <p class="eyebrow">{{ selectedQuestion() ? 'Edit Question' : 'Create Question' }}</p>
+          <h2>{{ selectedQuestion()?.title || 'Add a new interview question' }}</h2>
+        </div>
+
+        <div class="actions">
+          @if (selectedQuestion()) {
+            <button type="button" class="danger" [disabled]="saving()" (click)="deleteSelectedQuestion()">
+              Delete
+            </button>
+          }
+          <button type="button" class="primary" [disabled]="saving()" (click)="saveQuestion()">
+            {{ saving() ? 'Saving...' : 'Save' }}
+          </button>
+        </div>
+      </div>
+
+      <form [formGroup]="form" class="form" (ngSubmit)="saveQuestion()">
+        <label class="field field-wide">
+          <span>Title</span>
+          <input type="text" formControlName="title" placeholder="What is the Stream API?" />
+          @if (form.controls.title.invalid && form.controls.title.touched) {
+            <small>Title is required and must be under 500 characters.</small>
+          }
+        </label>
+
+        <div class="field-grid">
+          <label class="field">
+            <span>Topic</span>
+            <input type="text" formControlName="topic" placeholder="Java Streams" />
+            @if (form.controls.topic.invalid && form.controls.topic.touched) {
+              <small>Topic is required.</small>
+            }
+          </label>
+
+          <label class="field">
+            <span>Difficulty</span>
+            <select formControlName="difficulty">
+              @for (difficulty of difficulties; track difficulty) {
+                <option [value]="difficulty">{{ difficulty }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Status</span>
+            <select formControlName="answerStatus">
+              @for (status of answerStatuses; track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </label>
+        </div>
+
+        <label class="field field-wide">
+          <span>Tags</span>
+          <input type="text" formControlName="tags" placeholder="java, streams, collectors" />
+        </label>
+
+        <div class="answer-grid field-wide">
+          <label class="field">
+            <span>Answer Markdown</span>
+            <textarea
+              rows="12"
+              formControlName="answer"
+              placeholder="Write the answer or notes here. Markdown is supported."
+            ></textarea>
+            @if (form.controls.answer.invalid && form.controls.answer.touched) {
+              <small>Answer is required.</small>
+            }
+          </label>
+
+          <section class="markdown-preview" aria-label="Answer Markdown preview">
+            <span>Preview</span>
+            <article [innerHTML]="answerPreview()"></article>
+          </section>
+        </div>
+      </form>
+    </section>
+  </section>
+</main>
